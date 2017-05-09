@@ -16,6 +16,7 @@ import glob
 import importlib
 import time
 import sys
+import traceback
 import asyncio
 
 import discord
@@ -159,8 +160,16 @@ async def on_message(message_in):
             message_recv.mentions = message_in.mentions
             message_recv.channel = message_in.channel
 
-            command_result = await command.plugin.onCommand(message_recv)
-
+            # Catch a trace if the command fails.
+            try:
+                command_result = await command.plugin.onCommand(message_recv)
+                OccuredException = None
+            except Exception:
+                OccuredException = traceback.format_exc()
+                await client.send_message(message_in.channel,
+                "**Beep boop - Something went wrong!**\nCommand failed with exception:\n```{}```".format(OccuredException))
+                break
+                                
             # No message, error.
             if command_result == None:
                 await client.send_message(message_in.channel,
