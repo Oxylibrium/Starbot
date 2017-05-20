@@ -40,16 +40,13 @@ def message_count_get(id_server):
     database.init()
     table_message_count = Table('messagecounts', TableTypes.pGlobal)
     try:
-        entry_message_count = Table.search(table_message_count, 'serverid', '{}'.format(id_server))
+        msg_count = Table.search(table_message_count, 'serverid', '{}'.format(id_server)).data[1]
     except:
         # TODO: Narrow this and other Exception clauses.
         # Table must be empty.
-        entry_message_count = [0, 0]
+        msg_count = '0'
 
-    if entry_message_count:
-        return int(entry_message_count.data[1])
-    else:
-        return 0
+    return int(msg_count)
 
 # Log messages to database.
 
